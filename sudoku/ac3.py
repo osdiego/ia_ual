@@ -5,6 +5,7 @@ def AC3(csp, queue=None):
     """
     Constraint Propagation with AC-3
     """
+
     if queue == None:
         queue = list(csp.binary_constraints)
 
@@ -31,6 +32,7 @@ def revise(csp, cell_i, cell_j):
 
     returns true if a value is removed
     """
+
     removed = False
 
     # for each possible value remaining for the cell_i cell

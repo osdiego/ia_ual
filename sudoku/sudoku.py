@@ -1,18 +1,12 @@
 import itertools
 
-# coordinates idea from @ https://github.com/speix/sudoku-solver/blob/master/sudoku.py
+
 rows = "123456789"
 cols = "ABCDEFGHI"
 
 
 class Sudoku:
-    """
-    INITIALIZATION 
-    """
-
     def __init__(self, grid):
-        game = list(grid)
-
         # generation of all the coords of the grid
         self.cells = list()
         self.cells = self.generate_coords()
@@ -38,11 +32,10 @@ class Sudoku:
         self.pruned = {v: list() if grid[i] == '0' else [
             int(grid[i])] for i, v in enumerate(self.cells)}
 
-    """
-    generates all the coordinates of the cells
-    """
-
     def generate_coords(self):
+        """
+        generates all the coordinates of the cells
+        """
 
         all_cells_coords = []
 
@@ -58,11 +51,10 @@ class Sudoku:
 
         return all_cells_coords
 
-    """
-    generates all possible value remaining for each cell
-    """
-
     def generate_possibilities(self, grid):
+        """
+        generates all possible value remaining for each cell
+        """
 
         grid_as_list = list(grid)
 
@@ -78,12 +70,11 @@ class Sudoku:
 
         return possibilities
 
-    """
-    generates the constraints based on the rules of the game:
-    value different from any in row, column or square
-    """
-
     def generate_rules_constraints(self):
+        """
+        generates the constraints based on the rules of the game:
+        value different from any in row, column or square
+        """
 
         row_constraints = []
         column_constraints = []
@@ -122,11 +113,11 @@ class Sudoku:
         # all constraints is the sum of these 3 rules
         return row_constraints + column_constraints + square_constraints
 
-    """
-    generates the binary constraints based on the rule constraints
-    """
-
     def generate_binary_constraints(self, rule_constraints):
+        """
+        generates the binary constraints based on the rule constraints
+        """
+
         generated_binary_constraints = list()
 
         # for each set of constraints
@@ -155,11 +146,11 @@ class Sudoku:
 
         return generated_binary_constraints
 
-    """
-    generates the the constraint-related cell for each one of them
-    """
-
     def generate_related_cells(self):
+        """
+        generates the the constraint-related cell for each one of them
+        """
+
         related_cells = dict()
 
         # for each one of the 81 cells
@@ -174,24 +165,23 @@ class Sudoku:
 
         return related_cells
 
-    """
-    checks if the Sudoku's solution is finished
-    we loop through the possibilities for each cell
-    if all of them has only one, then the Sudoku is solved
-    """
+    def is_solved(self):
+        """
+        checks if the Sudoku's solution is finished
+        we loop through the possibilities for each cell
+        if all of them has only one, then the Sudoku is solved
+        """
 
-    def isFinished(self):
         for coords, possibilities in self.possibilities.items():
             if len(possibilities) > 1:
                 return False
 
         return True
 
-    """
-    returns a human-readable string
-    """
-
     def __str__(self):
+        """
+        returns a human-readable string
+        """
 
         output = ""
         count = 1

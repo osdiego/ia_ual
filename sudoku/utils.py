@@ -16,6 +16,7 @@ def fetch_sudokus(input):
     fetch sudokus
     fetches sudokus based on user's input
     """
+
     DEFAULT_SIZE = 81
 
     # if the input is an multiple of DEFAULT_SIZE=81
@@ -35,24 +36,3 @@ def fetch_sudokus(input):
 
         else:
             return [formatted_input[i:i+DEFAULT_SIZE] for i in range(0, len(formatted_input), DEFAULT_SIZE)]
-
-
-def print_grid(grid):
-    output = ""
-    count = 1
-
-    # for each cell, print its value
-    for cell in grid:
-
-        value = cell
-        output += "[" + value + "]"
-
-        # if we reach the end of the line,
-        # make a new line on display
-        if count >= 9:
-            count = 0
-            output += "\n"
-
-        count += 1
-
-    return output
