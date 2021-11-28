@@ -33,8 +33,9 @@ sudoku = [
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description='Program so solve Sudoku problems.')
-    parser.add_argument('--debug', '-d', action='store_true')
+        description='Program to solve Sudoku problems.')
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help='Parameter to choose when to log things related with the resolution.')
     args = parser.parse_args()
 
     # fetch Sudoku from user input
