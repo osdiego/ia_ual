@@ -1,9 +1,11 @@
-from utils import validate_input_sudoku
+from utils import format_sudoku
 from solver import solve
+import argparse
 
+
+# Inspired by https://github.com/stressGC/Python-AC3-Backtracking-CSP-Sudoku-Solver
 
 # Default Sudoku's grid
-
 sudoku = [
     ['003020600'],
     ['900305001'],
@@ -16,14 +18,28 @@ sudoku = [
     ['005010300']
 ]
 
+# Example of sudoku that the AC-3 algorithm cannot solve
+# sudoku = [
+#     ['005300000'],
+#     ['800000020'],
+#     ['070010500'],
+#     ['400005300'],
+#     ['010070006'],
+#     ['003200080'],
+#     ['060500009'],
+#     ['004000030'],
+#     ['000009700']
+# ]
+
 if __name__ == "__main__":
-    sudoku_grid_as_string = ''.join([line[0] for line in sudoku])
-    # print(sudoku_grid_as_string)
-    # exit()
+    parser = argparse.ArgumentParser(
+        description='Program so solve Sudoku problems.')
+    parser.add_argument('--debug', '-d', action='store_true')
+    args = parser.parse_args()
 
     # fetch Sudoku from user input
-    sudoku_queue = validate_input_sudoku(sudoku_grid_as_string)
+    sudoku_string = format_sudoku(sudoku)
 
     # for each sudoku, solve it !
-    for index, sudoku_grid in enumerate(sudoku_queue):
-        solve(sudoku_grid, index + 1, len(sudoku_queue))
+    for index, sudoku_grid in enumerate(sudoku_string):
+        solve(sudoku_grid, args)

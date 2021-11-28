@@ -1,20 +1,12 @@
 from defined_errors import InputError
 
 
-def is_different(cell_i, cell_j):
-    """
-    is_different
-    checks if two cells are the same
-    """
-
-    result = cell_i != cell_j
-    return result
-
-
-def validate_input_sudoku(input):
+def format_sudoku(input):
     """
     fetches Sudoku based on user's input
     """
+
+    input = ''.join([line[0] for line in input])
 
     DEFAULT_SIZE = 81
 
@@ -27,7 +19,6 @@ def validate_input_sudoku(input):
         "X", "0").replace("#", "0").replace("@", "0")
 
     if not formatted_input.isdigit():
-
         raise ValueError(
             "Only the following characters are allowed: [1,9], 'X', '#' and '@'.")
 

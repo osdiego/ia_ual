@@ -1,35 +1,38 @@
 import itertools
-
-
-cols = "123456789"
-rows = "ABCDEFGHI"
+from argparse import Namespace
 
 
 class Sudoku:
-    def __init__(self, grid):
-        # generation of all the coords of the grid
-        self.cells = [row + col for col in cols for row in rows]
-        print(self.cells)
+    cols = "123456789"
+    rows = "ABCDEFGHI"
 
-        # generation of all the possibilities for each one of these coords
+    def __init__(self, grid: str, args: Namespace):
+        # Generate all the coordinates of the grid
+        self.args = args
+        self.cells = self.generate_coords()
+
+        # Generate all the possibilities for each one of these coords
         self.possibilities = self.generate_possibilities(grid)
 
-        # generation of the line / row / square constraints
+        # Generate all the line / row / square constraints
         rule_constraints = self.generate_rules_constraints()
 
-        # convertion of these constraints to binary constraints
+        # Convertion of these constraints to binary constraints
         self.binary_constraints = self.generate_binary_constraints(
             rule_constraints)
 
-        # generating all constraint-related cells for each of them
+        # Generate all constraint-related cells for each of them
         self.related_cells = self.generate_related_cells()
 
-        # prune
-        self.pruned = dict()
-        self.pruned = {v: list() if grid[i] == '0' else [
-            int(grid[i])] for i, v in enumerate(self.cells)}
+    def generate_coords(self) -> list[str]:
+        all_coords = [row + col for col in self.cols for row in self.rows]
 
-    def generate_possibilities(self, grid):
+        if self.args.debug:
+            print(all_coords)
+
+        return all_coords
+
+    def generate_possibilities(self, grid: str) -> dict:
         """
         generates all possible value remaining for each cell
         """
@@ -48,55 +51,59 @@ class Sudoku:
 
         return possibilities
 
-    def generate_rules_constraints(self):
+    def generate_rules_constraints(self) -> list[list[str]]:
         """
         generates the constraints based on the rules of the game:
         value different from any in row, column or square
         """
 
         # get rows constraints
-        row_constraints = [[row + col for col in cols] for row in rows]
+        row_constraints = [[row + col for col in self.cols]
+                           for row in self.rows]
 
         # get columns constraints
-        column_constraints = [[row + col for row in rows] for col in cols]
+        column_constraints = [[row + col for row in self.rows]
+                              for col in self.cols]
 
         # get square constraints
         square_constraints = []
-        rows_square_coords = [rows[i:i+3] for i in range(0, len(rows), 3)]
-        print(rows_square_coords)
+        rows_square_coords = [self.rows[i:i+3]
+                              for i in range(0, len(self.rows), 3)]
 
-        cols_square_coords = [cols[i:i+3] for i in range(0, len(cols), 3)]
-        print(cols_square_coords)
+        cols_square_coords = [self.cols[i:i+3]
+                              for i in range(0, len(self.cols), 3)]
 
         # for each square
         for square_rows in rows_square_coords:
             for square_cols in cols_square_coords:
 
-                current_square_constraints = []
-
                 # and for each value in this square
-                for x in square_rows:
-                    for y in square_cols:
-                        current_square_constraints.append(x + y)
+                current_square_constraints = [
+                    row + col for col in square_cols for row in square_rows]
 
                 square_constraints.append(current_square_constraints)
 
+        all_constraints = row_constraints + column_constraints + square_constraints
+
+        if self.args.debug:
+            print('\nrow_constraints:')
+            print(row_constraints)
+
+            print('\column_constraints:')
+            print(column_constraints)
+
+            print('\square_constraints:')
+            print(square_constraints)
+
+            print('\nall_constraints:')
+            print(all_constraints)
+
         # all constraints is the sum of these 3 rules
-        print()
-        print(row_constraints)
-        print()
-        print(column_constraints)
-        print()
-        print(square_constraints)
-        print()
-        print(row_constraints + column_constraints + square_constraints)
-        print()
+        return all_constraints
 
-        return row_constraints + column_constraints + square_constraints
-
-    def generate_binary_constraints(self, rule_constraints):
+    def generate_binary_constraints(self, rule_constraints: list[list[str]]) -> list[list[str]]:
         """
-        generates the binary constraints based on the rule constraints
+        Generates the binary constraints based on the rule constraints
         """
 
         generated_binary_constraints = list()
@@ -120,13 +127,16 @@ class Sudoku:
                     generated_binary_constraints.append(
                         [constraint[0], constraint[1]])
 
-        print(generated_binary_constraints)
-        print(len(generated_binary_constraints))
+        if self.args.debug:
+            print(
+                f'\n {len(generated_binary_constraints)} generated_binary_constraints:')
+            print(generated_binary_constraints)
+
         return generated_binary_constraints
 
-    def generate_related_cells(self):
+    def generate_related_cells(self) -> dict:
         """
-        generates the the constraint-related cell for each one of them
+        Generates the the constraint-related cell for each one of them
         """
 
         related_cells = dict()
@@ -143,7 +153,7 @@ class Sudoku:
 
         return related_cells
 
-    def is_solved(self):
+    def is_solved(self) -> bool:
         """
         checks if the Sudoku's solution is finished
         we loop through the possibilities for each cell
@@ -152,7 +162,7 @@ class Sudoku:
 
         return not any([len(p) > 1 for p in self.possibilities.values()])
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         returns a human-readable string
         """
