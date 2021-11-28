@@ -30,10 +30,10 @@ def revise(csp, cell_i, cell_j):
     """
     remove_inconsistent_values
 
-    returns true if a value is removed
+    returns true if a value is revised
     """
 
-    removed = False
+    revised = False
 
     # for each possible value remaining for the cell_i cell
     for value in csp.possibilities[cell_i]:
@@ -43,7 +43,7 @@ def revise(csp, cell_i, cell_j):
 
             # then remove cell_i=value
             csp.possibilities[cell_i].remove(value)
-            removed = True
+            revised = True
 
-    # returns true if a value has been removed
-    return removed
+    # returns true if a value has been revised
+    return revised

@@ -1,14 +1,15 @@
 import itertools
 
 
-rows = "123456789"
-cols = "ABCDEFGHI"
+cols = "123456789"
+rows = "ABCDEFGHI"
 
 
 class Sudoku:
     def __init__(self, grid):
         # generation of all the coords of the grid
-        self.cells = self.generate_coords()
+        self.cells = [row + col for col in cols for row in rows]
+        print(self.cells)
 
         # generation of all the possibilities for each one of these coords
         self.possibilities = self.generate_possibilities(grid)
@@ -27,25 +28,6 @@ class Sudoku:
         self.pruned = dict()
         self.pruned = {v: list() if grid[i] == '0' else [
             int(grid[i])] for i, v in enumerate(self.cells)}
-
-    def generate_coords(self):
-        """
-        generates all the coordinates of the cells
-        """
-
-        all_cells_coords = []
-
-        # for A,B,C, ... ,H,I
-        for col in cols:
-
-            # for 1,2,3 ,... ,8,9
-            for row in rows:
-
-                # A1, A2, A3, ... , H8, H9
-                new_coords = col + row
-                all_cells_coords.append(new_coords)
-
-        return all_cells_coords
 
     def generate_possibilities(self, grid):
         """
@@ -72,34 +54,29 @@ class Sudoku:
         value different from any in row, column or square
         """
 
-        row_constraints = []
-        column_constraints = []
-        square_constraints = []
-
         # get rows constraints
-        for row in rows:
-            row_constraints.append([col + row for col in cols])
+        row_constraints = [[row + col for col in cols] for row in rows]
 
         # get columns constraints
-        for col in cols:
-            column_constraints.append([col + row for row in rows])
+        column_constraints = [[row + col for row in rows] for col in cols]
 
         # get square constraints
-        rows_square_coords = (cols[i:i+3] for i in range(0, len(rows), 3))
-        rows_square_coords = list(rows_square_coords)
+        square_constraints = []
+        rows_square_coords = [rows[i:i+3] for i in range(0, len(rows), 3)]
+        print(rows_square_coords)
 
-        cols_square_coords = (rows[i:i+3] for i in range(0, len(cols), 3))
-        cols_square_coords = list(cols_square_coords)
+        cols_square_coords = [cols[i:i+3] for i in range(0, len(cols), 3)]
+        print(cols_square_coords)
 
         # for each square
-        for row in rows_square_coords:
-            for col in cols_square_coords:
+        for square_rows in rows_square_coords:
+            for square_cols in cols_square_coords:
 
                 current_square_constraints = []
 
                 # and for each value in this square
-                for x in row:
-                    for y in col:
+                for x in square_rows:
+                    for y in square_cols:
                         current_square_constraints.append(x + y)
 
                 square_constraints.append(current_square_constraints)
@@ -173,11 +150,7 @@ class Sudoku:
         if all of them has only one, then the Sudoku is solved
         """
 
-        for coords, possibilities in self.possibilities.items():
-            if len(possibilities) > 1:
-                return False
-
-        return True
+        return not any([len(p) > 1 for p in self.possibilities.values()])
 
     def __str__(self):
         """

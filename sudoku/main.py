@@ -2,9 +2,7 @@ from utils import validate_input_sudoku
 from solver import solve
 
 
-"""
-default sudokus' grid
-"""
+# Default Sudoku's grid
 
 sudoku = [
     ['003020600'],
