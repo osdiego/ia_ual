@@ -1,5 +1,5 @@
 from sudoku import Sudoku
-from ac3 import AC3
+from ac3 import ac3
 
 
 def solve(grid, index, total):
@@ -9,10 +9,10 @@ def solve(grid, index, total):
     sudoku = Sudoku(grid)
 
     # launch AC-3 algorithm of it
-    AC3_result = AC3(sudoku)
+    ac3_result = ac3(sudoku)
 
     # Sudoku has no solution
-    if not AC3_result:
+    if not ac3_result:
         print("This sudoku has no solution".format(index, total))
 
     # check if AC-3 algorithm has solve the Sudoku

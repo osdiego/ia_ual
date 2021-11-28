@@ -8,23 +8,19 @@ cols = "ABCDEFGHI"
 class Sudoku:
     def __init__(self, grid):
         # generation of all the coords of the grid
-        self.cells = list()
         self.cells = self.generate_coords()
 
         # generation of all the possibilities for each one of these coords
-        self.possibilities = dict()
         self.possibilities = self.generate_possibilities(grid)
 
         # generation of the line / row / square constraints
         rule_constraints = self.generate_rules_constraints()
 
         # convertion of these constraints to binary constraints
-        self.binary_constraints = list()
         self.binary_constraints = self.generate_binary_constraints(
             rule_constraints)
 
         # generating all constraint-related cells for each of them
-        self.related_cells = dict()
         self.related_cells = self.generate_related_cells()
 
         # prune
@@ -89,8 +85,6 @@ class Sudoku:
             column_constraints.append([col + row for row in rows])
 
         # get square constraints
-        # how to split coords (non static):
-        # https://stackoverflow.com/questions/9475241/split-string-every-nth-character
         rows_square_coords = (cols[i:i+3] for i in range(0, len(rows), 3))
         rows_square_coords = list(rows_square_coords)
 
@@ -111,6 +105,16 @@ class Sudoku:
                 square_constraints.append(current_square_constraints)
 
         # all constraints is the sum of these 3 rules
+        print()
+        print(row_constraints)
+        print()
+        print(column_constraints)
+        print()
+        print(square_constraints)
+        print()
+        print(row_constraints + column_constraints + square_constraints)
+        print()
+
         return row_constraints + column_constraints + square_constraints
 
     def generate_binary_constraints(self, rule_constraints):
@@ -126,24 +130,21 @@ class Sudoku:
             binary_constraints = list()
 
             # 2 because we want binary constraints
-            # solution taken from :
-            # https://stackoverflow.com/questions/464864/how-to-get-all-possible-combinations-of-a-list-s-elements
 
             # for tuple_of_constraint in itertools.combinations(constraint_set, 2):
             for tuple_of_constraint in itertools.permutations(constraint_set, 2):
-                binary_constraints.append(tuple_of_constraint)
+                binary_constraints.append(list(tuple_of_constraint))
 
             # for each of these binary constraints
             for constraint in binary_constraints:
 
                 # check if we already have this constraint saved
-                # = check if already exists
-                # solution from https://stackoverflow.com/questions/7571635/fastest-way-to-check-if-a-value-exist-in-a-list
-                constraint_as_list = list(constraint)
-                if(constraint_as_list not in generated_binary_constraints):
+                if constraint not in generated_binary_constraints:
                     generated_binary_constraints.append(
                         [constraint[0], constraint[1]])
 
+        print(generated_binary_constraints)
+        print(len(generated_binary_constraints))
         return generated_binary_constraints
 
     def generate_related_cells(self):

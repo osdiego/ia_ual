@@ -1,7 +1,7 @@
 from utils import is_different
 
 
-def AC3(csp, queue=None):
+def ac3(csp, queue=None):
     """
     Constraint Propagation with AC-3
     """

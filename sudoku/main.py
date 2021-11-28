@@ -1,4 +1,4 @@
-from utils import fetch_sudokus
+from utils import validate_input_sudoku
 from solver import solve
 
 
@@ -23,8 +23,8 @@ if __name__ == "__main__":
     # print(sudoku_grid_as_string)
     # exit()
 
-    # fetch sudokus from user input
-    sudoku_queue = fetch_sudokus(sudoku_grid_as_string)
+    # fetch Sudoku from user input
+    sudoku_queue = validate_input_sudoku(sudoku_grid_as_string)
 
     # for each sudoku, solve it !
     for index, sudoku_grid in enumerate(sudoku_queue):
