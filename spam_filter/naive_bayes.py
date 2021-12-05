@@ -1,17 +1,15 @@
 from numpy import log
-import pandas as pd
-from datetime import datetime
 
 
 class NaiveBayes:
-    def __init__(self, c=0.78) -> None:
+    def __init__(self, c: float = 0.2) -> None:
         self.c = c
         self.b = 0
         # self.bag_of_words initialized in train method
         self.n = 0  # number of distinct words in all train documents
         # self.p initialized in train method
 
-    def train(self, documents, labels) -> None:
+    def train(self, documents: list[list[str]], labels: list[str]) -> None:
         self.bag_of_words = set()
 
         for document in documents:
@@ -50,7 +48,7 @@ class NaiveBayes:
         self.p['spam'] = {k: v/w_spam for k, v in self.p['spam'].items()}
         self.p['ham'] = {k: v/w_ham for k, v in self.p['ham'].items()}
 
-    def classify(self, document) -> str:
+    def classify(self, document: list[str]) -> str:
         t = -self.b
 
         for word in set(document):
