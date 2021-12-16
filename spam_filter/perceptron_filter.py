@@ -5,7 +5,7 @@ class Perceptron:
     def __init__(self, documents: list[list[str]], labels: list[str], t: int = 10) -> None:
         self.n = len(documents)
         self.documents = documents
-        self.labels = labels
+        self.labels = [-1 if label == 'ham' else 1 for label in labels]
         self.t = t
         self.prepare()
 
@@ -28,7 +28,7 @@ class Perceptron:
             )
 
     def train(self):
-        self.theta = [0 for i in self.n]
+        self.theta = [0 for _ in range(self.n)]
         self.theta_0 = 0
 
         for _ in self.t:
@@ -40,9 +40,10 @@ class Perceptron:
                     ]
                     self.theta_0 += label
 
-    def classifier(self, document: list[str], label: int):
-        if dot(self.theta, vector) + self.theta_0 <= 0:
-        if (teta * vetor de frequencias do documento) + teta0 <= 0:
-            return 'spam'
-        else:
+    def classifier(self, document: list[str]):
+        vector = [document.count(word) for word in self.all_document_words]
+
+        if (dot(self.theta, vector) + self.theta_0) <= 0:
             return 'ham'
+        else:
+            return 'spam'
