@@ -1,15 +1,20 @@
 from numpy import dot
 
+from log import log, log_debug
+
 
 class Perceptron:
-    def __init__(self, documents: list[list[str]], labels: list[str], t: int = 10) -> None:
-        self.n = len(documents)
+    def __init__(self, documents: list[list[str]], labels: list[int], t: int = 10, debug: bool = False) -> None:
+        log(__name__)
         self.documents = documents
-        self.labels = [-1 if label == 'ham' else 1 for label in labels]
+        self.labels = labels
         self.t = t
+        self.debug = debug
         self.prepare()
+        self.train()
 
     def prepare(self) -> None:
+        log_debug('preparing lexicon', self.debug)
         # Preparing lexicon
         self.all_document_words = set()
 
@@ -28,10 +33,13 @@ class Perceptron:
             )
 
     def train(self):
-        self.theta = [0 for _ in range(self.n)]
+        log_debug('training', self.debug)
+
+        self.theta = [0 for _ in range(len(self.all_document_words))]
         self.theta_0 = 0
 
-        for _ in self.t:
+        for epoch in range(1, self.t + 1):
+            log_debug(f'epoch = {epoch}', self.debug)
             for vector, label in zip(self.all_document_vectors, self.labels):
                 if label * (dot(self.theta, vector) + self.theta_0) <= 0:
                     label_x_vector = [label * v for v in vector]
@@ -40,10 +48,7 @@ class Perceptron:
                     ]
                     self.theta_0 += label
 
-    def classifier(self, document: list[str]):
+    def classify(self, document: list[str]):
         vector = [document.count(word) for word in self.all_document_words]
 
-        if (dot(self.theta, vector) + self.theta_0) <= 0:
-            return 'ham'
-        else:
-            return 'spam'
+        return 1 if (dot(self.theta, vector) + self.theta_0) > 0 else -1
