@@ -1,6 +1,5 @@
 import sys
 from argparse import ArgumentParser
-from ast import literal_eval
 from datetime import datetime
 from math import floor
 from re import IGNORECASE, findall
@@ -8,7 +7,7 @@ from warnings import simplefilter
 
 import pandas as pd
 
-from filter import filter
+from filter import filter, work_for_better_parameter
 from log import log
 from naive_bayes import NaiveBayes
 from perceptron import Perceptron
@@ -71,6 +70,8 @@ if __name__ == "__main__":
     else:
         log('Using treated dataframe as default.')
         df = pd.read_parquet('df_treated.parquet')
+        df['message'] = df['message'].apply(lambda array: list(array))
+
         # print(df)
 
         # for i, row in df.iterrows():
@@ -93,71 +94,28 @@ if __name__ == "__main__":
     train_documents, train_labels = list(
         df_train['message']), list(df_train['label'])
 
-    # --------------- Filtering with Naive Bayes method ---------------
-    c_values = [0.2, 10, 100, 1000, 10000]
-    best_c = 0
-    nb_f_measure = 0
-    best_nb = None
+    # Filtering with Naive Bayes method
+    c_values = [0.01, 0.05, 0.1, 0.5, 1, 10, 100, 1000, 10000]
 
-    for c in c_values:
-        print()
-        nb = NaiveBayes(
-            documents=train_documents,
-            labels=train_labels,
-            debug=args.debug,
-            c=c
-        )
+    work_for_better_parameter(
+        this_class=NaiveBayes,
+        parameters=c_values,
+        documents=train_documents,
+        labels=train_labels,
+        df_validation=df_validation,
+        df_test=df_test,
+        debug=args.debug
+    )
 
-        # Validating
-        print()
-        log('Validating')
-        this_nb_f_measure = filter(filter_obj=nb, df=df_validation.copy())
+    # Filtering with Perceptron
+    t_values = [v for v in range(1, 14)]
 
-        if this_nb_f_measure > nb_f_measure:
-            nb_f_measure = this_nb_f_measure
-            best_c = c
-            best_nb = nb
-
-    log(
-        f'Finished the validation for Naive Bayes and the best c value is {best_c}, taking in consideration the F-Measure of {nb_f_measure.f_measure()* 100:.4f}%.')
-    # Testing
-    print()
-
-    log('Testing')
-    filter(filter_obj=best_nb, df=df_test.copy())
-
-    # --------------- Filtering with Perceptron ---------------
-    t_values = [1, 10, 100, 1000, 10000]
-
-    best_t = 0
-    perceptron_f_measure = 0
-    best_perceptron = None
-
-    for t in t_values:
-        print()
-        perceptron = Perceptron(
-            documents=train_documents,
-            labels=train_labels,
-            debug=args.debug,
-            t=t
-        )
-
-        # Validating
-        print()
-        log('Validating')
-        this_perceptron_f_measure = filter(
-            filter_obj=nb, df=df_validation.copy())
-
-        if this_perceptron_f_measure > perceptron_f_measure:
-            perceptron_f_measure = this_perceptron_f_measure
-            best_t = t
-            best_perceptron = perceptron
-
-    log(
-        f'Finished the validation for Perceptron and the best t value is {best_t}, taking in consideration the F-Measure of {perceptron_f_measure.f_measure()* 100:.4f}%.')
-
-    # Testing
-    print()
-
-    log('Testing')
-    filter(filter_obj=best_perceptron, df=df_test.copy())
+    work_for_better_parameter(
+        this_class=Perceptron,
+        parameters=t_values,
+        documents=train_documents,
+        labels=train_labels,
+        df_validation=df_validation,
+        df_test=df_test,
+        debug=args.debug
+    )

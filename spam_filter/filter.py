@@ -4,6 +4,8 @@ from pandas import DataFrame
 
 from log import log
 from metric import Metric
+from naive_bayes import NaiveBayes
+from perceptron import Perceptron
 
 
 def filter(filter_obj, df: DataFrame) -> None:
@@ -23,35 +25,42 @@ def filter(filter_obj, df: DataFrame) -> None:
     return metrics_obj.f_measure()
 
 
-def work_for_better_parameter(parameters: list, documents: list[list[str]], labels: list[int], df_validation: DataFrame, df_test: DataFrame, debug: bool = False):
-    log('Finding the best parameter for it..')
+def work_for_better_parameter(this_class, parameters: list, documents: list[list[str]], labels: list[int], df_validation: DataFrame, df_test: DataFrame, debug: bool = False):
+    print()
+    log(f'Finding the best parameter for {this_class.__name__}..')
 
     best_parameter = 0
     best_f_measure = 0
     best_obj = None
 
     for parameter in parameters:
+        log(f'Parameter: {parameter}, building object of {this_class.__name__}..')
+        start = datetime.now()
+
         print()
-        this_obj = Perceptron(
+        this_obj = this_class(
             documents=documents,
             labels=labels,
             debug=debug,
             parameter=parameter
         )
+        log(f'Finalized in {datetime.now() - start} seconds.')
 
         # Validating
         print()
         log('Validating')
         this_f_measure = filter(
-            filter_obj=this_obj, df=df.copy())
+            filter_obj=this_obj, df=df_validation.copy())
 
-        if this_f_measure > perceptron_f_measure:
-            perceptron_f_measure = this_f_measure
+        if this_f_measure > best_f_measure:
+            best_f_measure = this_f_measure
             best_parameter = parameter
             best_obj = this_obj
 
+        log(f'Best parameter so far: {best_parameter}')
+
     log(
-        f'Finished the validation for Perceptron and the best t value is {best_parameter}, taking in consideration the F-Measure of {best_f_measure.f_measure()* 100:.4f}%.')
+        f'Finished the validation for class and the best parameter value is {best_parameter}, taking in consideration the F-Measure of {best_f_measure* 100:.4f}%.')
 
     # Testing
     print()
