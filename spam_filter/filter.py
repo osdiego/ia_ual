@@ -22,7 +22,7 @@ def filter(filter_obj, df: DataFrame) -> None:
     print()
     log(f'{type(filter_obj).__name__} filter finalized in {datetime.now() - start} seconds.')
 
-    return metrics_obj.f_measure()
+    return round(metrics_obj.f_measure(), 6), round(metrics_obj.precision(), 6)
 
 
 def work_for_better_parameter(this_class, parameters: list, documents: list[list[str]], labels: list[int], df_validation: DataFrame, df_test: DataFrame, debug: bool = False):
@@ -31,6 +31,7 @@ def work_for_better_parameter(this_class, parameters: list, documents: list[list
 
     best_parameter = 0
     best_f_measure = 0
+    best_precision = 0
     best_obj = None
 
     for parameter in parameters:
@@ -49,11 +50,12 @@ def work_for_better_parameter(this_class, parameters: list, documents: list[list
         # Validating
         print()
         log('Validating')
-        this_f_measure = filter(
+        this_f_measure, this_precision = filter(
             filter_obj=this_obj, df=df_validation.copy())
 
-        if this_f_measure > best_f_measure:
+        if this_f_measure > (best_f_measure) or (this_f_measure == best_f_measure and this_precision > best_precision):
             best_f_measure = this_f_measure
+            best_precision = this_precision
             best_parameter = parameter
             best_obj = this_obj
 
