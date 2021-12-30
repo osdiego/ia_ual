@@ -28,10 +28,17 @@ class Metric:
     def recall(self):
         return (self.tp) / (self.tp + self.tn)
 
+    def f_measure(self):
+        p = self.precision()
+        r = self.recall()
+
+        return (2 * p * r) / (p + r)
+
     def print_me_metrics(self):
-        log(f'Accuracy of: {self.accuracy()* 100:.4f}')
-        log(f'Error rate of: {self.error_rate()* 100:.4f}')
-        log(f'Sensitivity of: {self.sensitivity()* 100:.4f}')
-        log(f'Specificity of: {self.specificity()* 100:.4f}')
-        log(f'Precision of: {self.precision()* 100:.4f}')
-        log(f'Recall of: {self.recall()* 100:.4f}')
+        log(f'Accuracy (acc) of: {self.accuracy()* 100:.4f}%')
+        log(f'Error Rate (err) of: {self.error_rate()* 100:.4f}%')
+        log(f'Sensitivity (sn) of: {self.sensitivity()* 100:.4f}%')
+        log(f'Specificity (sp) of: {self.specificity()* 100:.4f}%')
+        log(f'Precision (p) of: {self.precision()* 100:.4f}%')
+        log(f'Recall (r) of: {self.recall()* 100:.4f}%')
+        log(f'F-Measure (FM) of: {self.f_measure()* 100:.4f}%')

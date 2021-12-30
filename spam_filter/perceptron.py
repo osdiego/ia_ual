@@ -4,11 +4,11 @@ from log import log, log_debug
 
 
 class Perceptron:
-    def __init__(self, documents: list[list[str]], labels: list[int], t: int = 10, debug: bool = False) -> None:
+    def __init__(self, documents: list[list[str]], labels: list[int], parameter: int = 10, debug: bool = False) -> None:
         log(__name__)
         self.documents = documents
         self.labels = labels
-        self.t = t
+        self.t = parameter
         self.debug = debug
         self.prepare()
         self.train()

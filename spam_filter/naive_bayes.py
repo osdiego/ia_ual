@@ -4,9 +4,9 @@ from log import log, log_debug
 
 
 class NaiveBayes:
-    def __init__(self, documents: list[list[str]], labels: list[int], c: float = 0.2, debug: bool = False) -> None:
+    def __init__(self, documents: list[list[str]], labels: list[int], parameter: float = 0.2, debug: bool = False) -> None:
         log(__name__)
-        self.c = c
+        self.c = parameter
         self.documents = documents
         self.labels = labels
         self.b = 0
