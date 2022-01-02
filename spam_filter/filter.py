@@ -4,8 +4,6 @@ from pandas import DataFrame
 
 from log import log
 from metric import Metric
-from naive_bayes import NaiveBayes
-from perceptron import Perceptron
 
 
 def filter(filter_obj, df: DataFrame) -> None:

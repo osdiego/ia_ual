@@ -7,7 +7,7 @@ from warnings import simplefilter
 
 import pandas as pd
 
-from filter import filter, work_for_better_parameter
+from filter import work_for_better_parameter
 from log import log
 from naive_bayes import NaiveBayes
 from perceptron import Perceptron
